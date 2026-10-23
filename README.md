@@ -1,5 +1,8 @@
 # 🚀 LPU Wi-Fi Captive Portal Auto-Login
 
+[![Download Extension](https://img.shields.io/badge/⬇️_Download-Extension%20(.zip)-2ea44f?style=for-the-badge&logo=googlechrome&logoColor=white)](https://github.com/AnunayYadav/LPU-Wifi-Automatic-Login-Browser-Extension/releases/latest/download/LPU-Wifi-Auto-Login-Extension.zip)
+[![Latest Release](https://img.shields.io/github/v/release/AnunayYadav/LPU-Wifi-Automatic-Login-Browser-Extension?label=Latest%20Release&color=0969da&style=for-the-badge)](https://github.com/AnunayYadav/LPU-Wifi-Automatic-Login-Browser-Extension/releases/latest)
+
 A fast, silent auto-login browser extension for **Lovely Professional University (LPU)** campus Wi-Fi networks (`LPU Hostels`, `LPU Hostels-5G`, `LPU Wireless`, Blocks 25–38).
 
 Built as a **Manifest V3 Extension** for **Brave**, **Google Chrome**, and **Microsoft Edge**.
@@ -39,17 +42,27 @@ LPU-Wifi-Automatic-Login-Browser-Extension/
 
 ---
 
-## 🌐 Installation Guide (Brave, Chrome & Edge)
+## 🌐 Quick Installation Guide (Brave, Chrome & Edge)
 
-1. Open your browser and navigate to:
+### Method 1: Direct Download (Recommended)
+1. **Download the Extension**: Click [**`LPU-Wifi-Auto-Login-Extension.zip`**](https://github.com/AnunayYadav/LPU-Wifi-Automatic-Login-Browser-Extension/releases/latest/download/LPU-Wifi-Auto-Login-Extension.zip) (or grab the latest package from [Releases](https://github.com/AnunayYadav/LPU-Wifi-Automatic-Login-Browser-Extension/releases/latest)).
+2. **Extract the ZIP**: Unzip / extract the downloaded file to a folder on your computer.
+3. **Open Extensions Page**: In your browser, navigate to:
    - **Brave**: `brave://extensions`
    - **Chrome**: `chrome://extensions`
    - **Edge**: `edge://extensions`
-2. Enable the **Developer mode** toggle in the top-right corner.
-3. Click the **Load unpacked** button.
-4. Select this repository folder directly.
-5. Click the extension icon in your browser toolbar, enter your **Registration Number** and **Password**, and click **Save**.
-6. **Done!** Whenever your laptop connects to LPU Wi-Fi, the extension will log you in automatically in the background.
+4. **Enable Developer Mode**: Turn on the toggle switch in the top-right corner.
+5. **Load Unpacked**: Click the **Load unpacked** button in the top-left and select the extracted folder.
+6. **Save Credentials**: Click the extension icon in your browser toolbar, enter your **Registration Number** & **Password**, and click **Save Profile**.
+7. **Done!** Whenever your laptop connects to LPU Wi-Fi, the extension will log you in automatically in the background.
+
+---
+
+### Method 2: For Developers (Git Clone)
+```bash
+git clone https://github.com/AnunayYadav/LPU-Wifi-Automatic-Login-Browser-Extension.git
+```
+Then load the cloned repository directory via **Load unpacked** in `chrome://extensions`.
 
 ---
 

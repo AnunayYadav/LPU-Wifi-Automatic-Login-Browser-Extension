@@ -24,3 +24,7 @@ Desktop.ini
 .idea/
 *.swp
 *.bak
+
+# Build distribution & packages
+dist/
+*.zip

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="window">
+    <!-- Top Header -->
+    <header class="header">
+      <div class="brand">
+        <div class="brand-icon checking" id="wifiStatusIcon" title="Campus Wi-Fi (Click to check connection)">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 13a10 10 0 0 1 14 0"></path>
+            <path d="M8.5 16.5a5 5 0 0 1 7 0"></path>
+            <path d="M2 8.82a15 15 0 0 1 20 0"></path>
+            <line x1="12" y1="20" x2="12.01" y2="20"></line>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="app-name">Campus Wi-Fi</span>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <button type="button" id="manualSilentLoginBtn" class="icon-btn action-flash-btn" title="Fast Silent Login (One-Click Background Auth)" aria-label="Fast Silent Login">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+        </button>
+
+        <label class="header-toggle" title="Toggle Auto-Login On/Off">
+          <input type="checkbox" id="headerPowerToggle" class="ios-switch-input" checked>
+          <span class="ios-switch"></span>
+        </label>
+
+        <button type="button" id="themeToggleBtn" class="icon-btn" title="Toggle Theme" aria-label="Toggle Theme">
+          <!-- Sun Icon (Dark Mode) -->
+          <svg id="sunIcon" class="theme-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <!-- Moon Icon (Light Mode) -->
+          <svg id="moonIcon" class="theme-icon hidden" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- iOS Apple-Style Segmented Navigation Tabs (2 Clean Tabs) -->
+    <nav class="segmented-control" role="tablist">
+      <button type="button" class="segment-btn active" data-tab="tab-accounts" role="tab" aria-selected="true">
+        <span>Accounts</span>
+      </button>
+      <button type="button" class="segment-btn" data-tab="tab-preferences" role="tab" aria-selected="false">
+        <span>Preferences</span>
+      </button>
+    </nav>
+
+    <!-- ==================== TAB 1: ACCOUNTS & PROFILES ==================== -->
+    <div id="tab-accounts" class="tab-pane active" role="tabpanel">
+      <!-- 1. Profiles List View (Default) -->
+      <div id="accountsListView" class="sub-view">
+        <div class="section-label-row">
+          <span class="section-label">Saved Profiles</span>
+          <button type="button" id="showAddAccountBtn" class="text-link-btn">+ Add Account</button>
+        </div>
+
+        <div id="accountsList" class="accounts-group">
+          <!-- Rendered dynamically by popup.js -->
+        </div>
+
+        <div class="action-link-row">
+          <button type="button" id="openPortalPrimaryBtn" class="text-action-btn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+            <span>Open Portal &amp; Login</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Dedicated Edit / Add Profile View (Replaces List with Back Button) -->
+      <div id="accountEditView" class="sub-view hidden">
+        <div class="edit-nav-row">
+          <button type="button" id="backToAccountsBtn" class="back-nav-btn" title="Back to Profiles">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            <span>Profiles</span>
+          </button>
+          <span id="formCardTitle" class="edit-nav-title">Edit Profile</span>
+          <div style="width: 52px;"></div>
+        </div>
+
+        <form id="accountForm" class="edit-form-card">
+          <input type="hidden" id="editAccountId" value="">
+          <div class="field">
+            <label for="accLabel">Profile Label</label>
+            <input type="text" id="accLabel" placeholder="e.g. Personal, Roommate, Laptop" required spellcheck="false">
+          </div>
+          <div class="field">
+            <label for="accUsername">Registration ID</label>
+            <input type="text" id="accUsername" placeholder="e.g. 12001234" required spellcheck="false">
+          </div>
+          <div class="field">
+            <label for="accPassword">Password</label>
+            <div class="input-with-action">
+              <input type="password" id="accPassword" placeholder="••••••••" required>
+              <button type="button" id="toggleAccPassBtn" class="reveal-btn" title="Show/Hide">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="edit-actions-col">
+            <button type="submit" id="saveAccountBtn" class="btn btn-solid">Save Profile</button>
+            <button type="button" id="deleteCurrentAccountBtn" class="delete-link-btn hidden">Delete Profile</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 2: PREFERENCES ==================== -->
+    <div id="tab-preferences" class="tab-pane" role="tabpanel">
+      <div class="section-label-row">
+        <span class="section-label">Automation Rules</span>
+      </div>
+
+      <div class="group-box">
+        <label class="toggle-item">
+          <div class="toggle-meta">
+            <span class="toggle-title">Auto-Authenticate</span>
+            <span class="toggle-desc">Submit credentials when portal opens</span>
+          </div>
+          <input type="checkbox" id="prefAutoLogin" class="ios-switch-input" checked>
+          <span class="ios-switch"></span>
+        </label>
+
+        <div class="divider"></div>
+
+        <label class="toggle-item">
+          <div class="toggle-meta">
+            <span class="toggle-title">Login on Browser Open</span>
+            <span class="toggle-desc">Authenticate when Brave/Chrome launches</span>
+          </div>
+          <input type="checkbox" id="prefLoginOnStartup" class="ios-switch-input" checked>
+          <span class="ios-switch"></span>
+        </label>
+
+        <div class="divider"></div>
+
+        <label class="toggle-item">
+          <div class="toggle-meta">
+            <span class="toggle-title">Background Keep-Alive</span>
+            <span class="toggle-desc">Auto-reconnect if campus Wi-Fi drops</span>
+          </div>
+          <input type="checkbox" id="prefKeepAlive" class="ios-switch-input" checked>
+          <span class="ios-switch"></span>
+        </label>
+
+        <div class="divider"></div>
+
+        <label class="toggle-item">
+          <div class="toggle-meta">
+            <span class="toggle-title">Auto-Close Tab</span>
+            <span class="toggle-desc">Dismiss captive tab once authenticated</span>
+          </div>
+          <input type="checkbox" id="prefAutoClose" class="ios-switch-input">
+          <span class="ios-switch"></span>
+        </label>
+      </div>
+
+      <!-- Tab close delay option -->
+      <div id="closeDelayRow" class="sub-option-box hidden">
+        <span class="sub-label">Dismiss Delay</span>
+        <div class="pill-selector">
+          <button type="button" class="pill-opt active" data-delay="1">1s</button>
+          <button type="button" class="pill-opt" data-delay="3">3s</button>
+          <button type="button" class="pill-opt" data-delay="5">5s</button>
+        </div>
+      </div>
+
+      <!-- Network Coverage & Clean Minimal Session Action -->
+      <div class="session-footer">
+        <div class="session-meta">
+          <span class="session-badge">⚡ Auto-Detect</span>
+          <span class="session-desc">Covers Hostels & All Blocks</span>
+        </div>
+        <button type="button" id="logoutSessionBtn" class="logout-link-btn" title="Release device slot">
+          Disconnect Session
+        </button>
+      </div>
+    </div>
+
+    <!-- Floating Toast Feedback -->
+    <div id="toast" class="toast hidden">Saved</div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

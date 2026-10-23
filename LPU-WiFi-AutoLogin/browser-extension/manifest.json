@@ -1,0 +1,68 @@
+{
+  "manifest_version": 3,
+  "name": "LPU Wi-Fi Auto-Login",
+  "version": "1.4.3",
+  "description": "Multi-account, automated background auto-login and session keep-alive for all LPU Wi-Fi networks (Hostels, Blocks 25-38, Wireless).",
+  "permissions": [
+    "storage",
+    "tabs",
+    "alarms",
+    "notifications"
+  ],
+  "host_permissions": [
+    "http://internet.lpu.in/*",
+    "https://internet.lpu.in/*",
+    "http://*.lpu.in/*",
+    "https://*.lpu.in/*",
+    "http://10.10.0.1/*",
+    "https://10.10.0.1/*",
+    "http://172.20.0.66/*",
+    "https://172.20.0.66/*",
+    "http://172.16.0.1/*",
+    "https://172.16.0.1/*",
+    "http://172.18.0.1/*",
+    "https://172.18.0.1/*",
+    "http://connectivitycheck.gstatic.com/*",
+    "https://connectivitycheck.gstatic.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://internet.lpu.in/*",
+        "https://internet.lpu.in/*",
+        "http://*.lpu.in/*",
+        "https://*.lpu.in/*",
+        "http://10.10.0.1/*",
+        "https://10.10.0.1/*",
+        "http://172.20.0.66/*",
+        "https://172.20.0.66/*",
+        "http://172.16.0.1/*",
+        "https://172.16.0.1/*",
+        "http://172.18.0.1/*",
+        "https://172.18.0.1/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+
+  "background": {
+    "service_worker": "background.js"
+  }
+}

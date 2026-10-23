@@ -1,0 +1,26 @@
+# Personal configuration containing credentials
+config.json
+windows-service/config.json
+
+# Logs & runtime caches
+*.log
+autologin.log
+daemon.pid
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment and sensitive keys
+.env
+.env.*
+*.pem
+*.key
+
+# Operating System & IDE junk
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
+*.swp
+*.bak

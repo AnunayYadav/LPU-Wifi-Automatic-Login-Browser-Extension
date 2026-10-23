@@ -1,0 +1,1104 @@
+/* ==========================================================================
+   Apple-Inspired Clean Minimal UI (True Neutral Obsidian & Titanium)
+   Outline-Free, Elevated Surfaces, Deep Rounded Geometry
+   ========================================================================== */
+
+:root,
+[data-theme="dark"] {
+  --bg-app: #0a0a0c;
+  --bg-window: #121215;
+  --bg-card: #1a1a1e;
+  --bg-card-hover: #222227;
+  --bg-field: #25252b;
+  --bg-field-focus: #2d2d35;
+  --bg-segment: #1c1c21;
+  --bg-segment-active: #2d2d34;
+
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.14);
+  --border-active: rgba(255, 255, 255, 0.32);
+
+  --text-primary: #f5f5f7;
+  --text-secondary: #8e8e93;
+  --text-tertiary: #636366;
+  
+  --accent-green: #34c759;
+  --accent-green-bg: rgba(52, 199, 89, 0.14);
+  --accent-amber: #ff9f0a;
+  --accent-amber-bg: rgba(255, 159, 10, 0.14);
+  --accent-red: #ff453a;
+  --accent-red-bg: rgba(255, 69, 58, 0.14);
+
+  --btn-primary-bg: #f5f5f7;
+  --btn-primary-text: #09090b;
+  --btn-primary-hover: #ffffff;
+
+  --btn-ghost-bg: #1c1c21;
+  --btn-ghost-text: #f5f5f7;
+  --btn-ghost-hover: #28282f;
+
+  --switch-off: #39393d;
+  --switch-on: #34c759;
+}
+
+[data-theme="light"] {
+  --bg-app: #ffffff;
+  --bg-window: #ffffff;
+  --bg-card: #f5f5f7;
+  --bg-card-hover: #ececee;
+  --bg-field: #e8e8ed;
+  --bg-field-focus: #dedee4;
+  --bg-segment: #f0f0f3;
+  --bg-segment-active: #ffffff;
+
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-hover: rgba(0, 0, 0, 0.12);
+  --border-active: rgba(0, 0, 0, 0.28);
+
+  --text-primary: #1d1d1f;
+  --text-secondary: #86868b;
+  --text-tertiary: #a1a1a6;
+
+  --accent-green: #28a745;
+  --accent-green-bg: rgba(40, 167, 69, 0.12);
+  --accent-amber: #d97706;
+  --accent-amber-bg: rgba(217, 119, 6, 0.12);
+  --accent-red: #dc2626;
+  --accent-red-bg: rgba(220, 38, 38, 0.12);
+
+  --btn-primary-bg: #1d1d1f;
+  --btn-primary-text: #ffffff;
+  --btn-primary-hover: #000000;
+
+  --btn-ghost-bg: #f5f5f7;
+  --btn-ghost-text: #1d1d1f;
+  --btn-ghost-hover: #ebebef;
+
+  --switch-off: #e3e3e8;
+  --switch-on: #34c759;
+}
+
+/* ==========================================================================
+   Plus Jakarta Sans Local Variable Font (Offline & Fast)
+   ========================================================================== */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('fonts/PlusJakartaSans-Variable.woff2') format('woff2');
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+html {
+  background-color: var(--bg-app);
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  width: 318px;
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  font-size: 12px;
+  line-height: 1.4;
+  letter-spacing: -0.12px;
+  user-select: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.window {
+  background-color: var(--bg-app);
+  padding: 12px 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   Header Area
+   ========================================================================== */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background-color: var(--bg-card);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.brand-icon:hover {
+  transform: scale(1.06);
+}
+
+.brand-icon.online {
+  color: #34c759;
+  background: rgba(52, 199, 89, 0.15);
+  box-shadow: 0 0 10px rgba(52, 199, 89, 0.25);
+}
+
+.brand-icon.offline {
+  color: #ff453a;
+  background: rgba(255, 69, 58, 0.15);
+  box-shadow: 0 0 8px rgba(255, 69, 58, 0.2);
+}
+
+.brand-icon.checking {
+  color: #ff9f0a;
+  background: rgba(255, 159, 10, 0.14);
+}
+
+.brand-text {
+  display: flex;
+  align-items: center;
+}
+
+.app-name {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+.app-chip {
+  font-size: 8.5px;
+  font-weight: 500;
+  padding: 1px 4.5px;
+  border-radius: 3.5px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  letter-spacing: 0.1px;
+}
+
+.app-sub {
+  font-size: 10px;
+  color: var(--text-secondary);
+  max-width: 135px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.header-toggle {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.icon-btn {
+  background: var(--bg-card);
+  border: none;
+  color: var(--text-secondary);
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.18s ease;
+}
+
+.icon-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-card-hover);
+}
+
+.action-flash-btn {
+  color: #ff9500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-flash-btn:hover {
+  color: #ffa726;
+  background-color: rgba(255, 149, 0, 0.16);
+}
+
+.action-flash-btn.loading svg {
+  animation: flashSpin 0.7s linear infinite;
+}
+
+@keyframes flashSpin {
+  0% { transform: scale(0.9) rotate(0deg); opacity: 0.6; }
+  50% { transform: scale(1.1) rotate(180deg); opacity: 1; }
+  100% { transform: scale(0.9) rotate(360deg); opacity: 0.6; }
+}
+
+.theme-icon.hidden {
+  display: none;
+}
+
+/* Status Pill */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2.5px 7.5px;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.status-pill.online {
+  background: var(--accent-green-bg);
+  color: var(--accent-green);
+}
+
+.status-pill.offline {
+  background: var(--accent-amber-bg);
+  color: var(--accent-amber);
+}
+
+.status-pill.checking {
+  background: var(--bg-card);
+  color: var(--text-secondary);
+}
+
+.status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: currentColor;
+  box-shadow: 0 0 5px currentColor;
+}
+
+/* ==========================================================================
+   Apple-Style Segmented Navigation Control
+   ========================================================================== */
+
+.segmented-control {
+  display: flex;
+  background-color: var(--bg-segment);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.segment-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4.5px 0;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  transition: color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.segment-btn:hover {
+  color: var(--text-primary);
+}
+
+.segment-btn:active {
+  opacity: 0.72;
+}
+
+.segment-btn.active {
+  background-color: var(--bg-segment-active);
+  color: var(--text-primary);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  font-weight: 600;
+}
+
+/* Tab Panels with Butter-Smooth Zero-Jitter Transition */
+.tab-pane {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.tab-pane.active {
+  display: flex;
+  animation: iosTabFadeIn 0.18s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes iosTabFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Section Labels (Clean Normal Case) */
+.section-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1px;
+}
+
+.section-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: -0.1px;
+  color: var(--text-tertiary);
+  text-transform: none;
+}
+
+.text-link-btn {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 10.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.text-link-btn:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   Accounts & Profile Cards
+   ========================================================================== */
+
+.accounts-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.account-card {
+  background-color: var(--bg-card);
+  border-radius: 10px;
+  padding: 7px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  position: relative;
+}
+
+.account-card:hover {
+  background-color: var(--bg-card-hover);
+}
+
+.account-card.active {
+  background-color: var(--bg-card);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.account-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.account-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background-color: var(--bg-field);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.account-card.active .account-avatar {
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+}
+
+.account-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.account-label-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.account-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.badge-active {
+  font-size: 8px;
+  font-weight: 600;
+  padding: 1px 4px;
+  border-radius: 3.5px;
+  background: var(--accent-green-bg);
+  color: var(--accent-green);
+}
+
+.account-user {
+  font-size: 10px;
+  color: var(--text-secondary);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.account-actions {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.acc-icon-btn {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  padding: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.acc-icon-btn:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-field);
+}
+
+.acc-icon-btn.delete:hover {
+  color: var(--accent-red);
+}
+
+/* Bottom Action Link (Clean Text Link) */
+.action-link-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
+  padding: 4px 0;
+}
+
+.text-action-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.18s ease;
+  user-select: none;
+}
+
+.text-action-btn:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-card);
+}
+
+.text-action-btn:active {
+  transform: scale(0.97);
+}
+
+/* ==========================================================================
+   Sub-Views & Dedicated Edit Screen Navigation
+   ========================================================================== */
+
+.sub-view {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.sub-view.hidden {
+  display: none !important;
+}
+
+/* iOS Push animation (Editor slides in gently from right) */
+.sub-view.slide-in-right {
+  animation: iosSubViewPush 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* iOS Pop animation (Profiles list slides in gently from left) */
+.sub-view.slide-in-left {
+  animation: iosSubViewPop 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes iosSubViewPush {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes iosSubViewPop {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.edit-nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0 2px 0;
+}
+
+.back-nav-btn {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 7px;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
+  font-family: inherit;
+}
+
+.back-nav-btn:hover {
+  background-color: var(--bg-card);
+}
+
+.back-nav-btn:active {
+  opacity: 0.65;
+}
+
+.edit-nav-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.edit-form-card {
+  background-color: var(--bg-card);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.edit-actions-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.delete-link-btn {
+  background: none;
+  border: none;
+  color: var(--accent-red);
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px;
+  text-align: center;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+
+.delete-link-btn:hover {
+  text-decoration: underline;
+  opacity: 0.85;
+}
+
+.delete-link-btn.hidden {
+  display: none !important;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+label {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+input[type="text"],
+input[type="password"],
+.clean-select {
+  width: 100%;
+  background-color: var(--bg-field);
+  border: none;
+  border-radius: 9px;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  color: var(--text-primary);
+  font-family: inherit;
+  outline: none;
+  transition: background-color 0.18s ease;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+.clean-select:focus {
+  background-color: var(--bg-field-focus);
+}
+
+.input-with-action {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-action input {
+  padding-right: 30px;
+}
+
+.reveal-btn {
+  position: absolute;
+  right: 6px;
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.reveal-btn:hover {
+  color: var(--text-primary);
+}
+
+.form-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.btn-solid-sm {
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border: none;
+  border-radius: 7px;
+  padding: 6px 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-ghost-sm {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  padding: 6px 10px;
+  font-size: 11.5px;
+  cursor: pointer;
+}
+
+.btn-ghost-sm:hover {
+  color: var(--text-primary);
+}
+
+/* ==========================================================================
+   Grouped iOS-Style Toggles (Outline-Free)
+   ========================================================================== */
+
+.group-box {
+  background-color: var(--bg-card);
+  border-radius: 11px;
+  padding: 1px 10px;
+}
+
+.toggle-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  cursor: pointer;
+}
+
+.toggle-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding-right: 10px;
+}
+
+.toggle-title {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.toggle-desc {
+  font-size: 9.5px;
+  color: var(--text-secondary);
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--border-subtle);
+}
+
+/* Native Apple iOS Switch */
+.ios-switch-input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.ios-switch {
+  width: 30px;
+  height: 17px;
+  background-color: var(--switch-off);
+  border-radius: 9999px;
+  position: relative;
+  transition: background-color 0.24s cubic-bezier(0.25, 1, 0.5, 1);
+  flex-shrink: 0;
+}
+
+.ios-switch::before {
+  content: "";
+  position: absolute;
+  height: 13px;
+  width: 13px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 1.5px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.28s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.ios-switch-input:checked + .ios-switch {
+  background-color: var(--switch-on);
+}
+
+.ios-switch-input:checked + .ios-switch::before {
+  transform: translateX(13px);
+}
+
+/* Sub-Option Box */
+.sub-option-box {
+  background-color: var(--bg-card);
+  border-radius: 9px;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sub-option-box.hidden {
+  display: none;
+}
+
+.sub-label {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.pill-selector {
+  display: flex;
+  gap: 3.5px;
+}
+
+.pill-opt {
+  background: var(--bg-field);
+  border: none;
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2.5px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.pill-opt.active {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   Network Info & Diagnostics
+   ========================================================================== */
+
+.card-info {
+  background-color: var(--bg-card);
+  border-radius: 14px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11.5px;
+}
+
+.info-label {
+  color: var(--text-secondary);
+}
+
+.info-val {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.info-val.val-green {
+  color: var(--accent-green);
+}
+
+.info-val.val-truncate {
+  max-width: 170px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Clean Select */
+.clean-select {
+  cursor: pointer;
+  outline: none;
+}
+
+/* ==========================================================================
+   Action Buttons
+   ========================================================================== */
+
+.button-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.action-link-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.text-action-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 7px;
+  font-family: inherit;
+  transition: all 0.16s ease;
+  width: 100%;
+}
+
+.text-action-btn:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-card);
+}
+
+.text-action-btn:active {
+  opacity: 0.65;
+}
+
+.btn {
+  flex: 1;
+  padding: 7.5px 12px;
+  border-radius: 9px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: all 0.18s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-solid {
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+}
+
+.btn-solid:hover {
+  opacity: 0.92;
+}
+
+.btn-solid:active {
+  opacity: 0.75;
+}
+
+.btn-ghost {
+  background-color: var(--btn-ghost-bg);
+  color: var(--btn-ghost-text);
+}
+
+.btn-ghost:hover {
+  background-color: var(--btn-ghost-hover);
+}
+
+.btn-danger-ghost {
+  background-color: var(--accent-red-bg);
+  color: var(--accent-red);
+}
+
+.btn-danger-ghost:hover {
+  background-color: rgba(255, 69, 58, 0.2);
+}
+
+/* ==========================================================================
+   Minimal Session Footer
+   ========================================================================== */
+
+.session-footer {
+  margin-top: 2px;
+  background-color: var(--bg-card);
+  border-radius: 11px;
+  padding: 7px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.session-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5px;
+}
+
+.session-badge {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--accent-green);
+}
+
+.session-desc {
+  font-size: 9px;
+  color: var(--text-secondary);
+}
+
+.logout-link-btn {
+  background: var(--accent-red-bg);
+  color: var(--accent-red);
+  border: none;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3.5px 7.5px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.logout-link-btn:hover {
+  background-color: rgba(255, 69, 58, 0.22);
+}
+
+/* ==========================================================================
+   Toast Notification
+   ========================================================================== */
+
+.toast {
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  padding: 6px 16px;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  z-index: 100;
+}
+
+.toast.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(8px);
+}
+

@@ -1,36 +1,34 @@
-# 🌐 LPU Wi-Fi Auto-Login Pro v1.2.3 (Browser Extension)
+# 🚀 Installation & Setup Guide
 
-Minimalist, clean, Apple-designed extension for automatic Wi-Fi login on LPU 24Online portals.
-
----
-
-### 🚀 Streamlined & Purpose-Built Features
-
-1. **✨ Silky Smooth iOS 18 Motion & Transitions**:
-   - Directional slide animations when switching tabs (`Accounts` ⟷ `Preferences`).
-   - True iOS navigation push & pop when opening the profile editor (`slide-in-right`) and returning via `‹ Profiles` (`slide-in-left`).
-   - Authentic Apple spring curves (`cubic-bezier(0.25, 1, 0.5, 1)` and `cubic-bezier(0.34, 1.4, 0.64, 1)`).
-   - Micro-haptic button & card press feedback (`active: scale(0.97)`).
-2. **📱 Seamless In-Place Screen Navigation**:
-   - Tapping **"+ Add Account"** or the **Edit (pencil)** icon replaces the screen with a clean, focused editor view.
-   - Includes a sleek **`‹ Profiles` Back button** to navigate back without stretching the popup vertically.
-3. **⚡ 100% Automated Auto-Detect (No Manual Dropdowns)**:
-   - Connects across all campus networks automatically:
-     - `LPU Wireless` (Central Library, UniMall, Academic Zones)
-     - `LPU Hostels` (Boys Hostels BH1–BH8, Girls Hostels GH1–GH6)
-     - `LPU Blocks 25–38` (All block subnets)
-4. **👥 Multi-Account Profile Switcher**:
-   - Save multiple student accounts (*Personal*, *Roommate*, *Laptop*, *Lab ID*).
-   - Switch active credentials with a single tap.
-5. **⚙️ Clean 2-Tab Apple Design**:
-   - **Accounts**: Active profile, switcher, "+ Add Account", and "Open Portal & Login".
-   - **Preferences**: Auto-authenticate, login on browser open, keep-alive reconnect, and compact disconnect session button.
+### Option 1: Quick Install via ZIP (Recommended)
+1. Download **[`LPU-Wifi-Auto-Login-Extension.zip`](https://github.com/AnunayYadav/LPU-Wifi-Automatic-Login-Browser-Extension/releases/latest/download/LPU-Wifi-Auto-Login-Extension.zip)** from Releases.
+2. Unzip/extract the folder somewhere convenient (like your `Documents` or `Projects` folder).
+3. Open your browser's extension manager:
+   - **Brave**: `brave://extensions`
+   - **Chrome**: `chrome://extensions`
+   - **Edge**: `edge://extensions`
+4. Toggle **Developer mode** on in the top-right corner.
+5. Click **Load unpacked** and select the extracted folder.
+6. Click the extension icon in your toolbar, enter your LPU credentials, and click **Save Profile**.
 
 ---
 
-### 📦 How to Reload / Update in Brave or Chrome
+### Option 2: Clone via Git
+```bash
+git clone https://github.com/AnunayYadav/LPU-Wifi-Automatic-Login-Browser-Extension.git
+```
+Then load the folder directly in your browser with **Load unpacked**.
 
-1. Go to **`brave://extensions`** (or `chrome://extensions`).
-2. Locate **LPU Wi-Fi Auto-Login**.
-3. Click the circular **Reload** icon (🔄).
-4. Click the extension icon in your toolbar to experience the silky-smooth animations!
+---
+
+### 🔄 Updating to New Versions
+1. Download the new release zip.
+2. Overwrite the files in your existing extension folder.
+3. In `brave://extensions` or `chrome://extensions`, click the **Reload (🔄)** icon on the LPU Wi-Fi Auto-Login card.
+
+---
+
+### 💡 Tips & Troubleshooting
+- **Pin to Toolbar**: Click the puzzle piece icon (🧩) in your browser toolbar and pin **LPU Wi-Fi Auto-Login** so you can see live connection status.
+- **Multiple Accounts**: Use **+ Add Account** inside the popup to save a secondary registration number or roommate ID.
+- **Session drops?**: Ensure **Auto Keep-Alive** is enabled in the Preferences tab.

@@ -24,19 +24,17 @@ Built as a **Manifest V3 Extension** for **Brave**, **Google Chrome**, and **Mic
 ## 📁 Repository Structure
 
 ```text
-LPU-WiFi-AutoLogin/
-├── browser-extension/     # Chrome, Brave & Edge Extension (Manifest V3)
-│   ├── manifest.json      # Extension configuration & host permissions
-│   ├── popup.html         # Modern popup interface
-│   ├── popup.css          # True Neutral Obsidian / Titanium styling
-│   ├── popup.js           # Multi-account & settings controller
-│   ├── background.js      # Silent HTTP POST engine & dynamic toolbar icon
-│   ├── content.js         # In-page auto-fill & fast dismissal
-│   ├── fonts/             # Inter typography
-│   └── icons/             # Dynamic state icons (online, offline, connecting)
-│
-├── .gitignore             # Shields local configs from git
-└── README.md              # Project documentation
+LPU-Wifi-Automatic-Login-Browser-Extension/
+├── manifest.json      # Extension configuration & host permissions (Manifest V3)
+├── popup.html         # Apple-inspired popup interface
+├── popup.css          # True Neutral Obsidian / Titanium styling
+├── popup.js           # Multi-account & settings controller
+├── background.js      # Silent HTTP POST engine & dynamic toolbar icon
+├── content.js         # In-page auto-fill & fast dismissal
+├── fonts/             # Inter typography
+├── icons/             # Dynamic state icons (online, offline, connecting)
+├── .gitignore         # Shields local configs from git
+└── README.md          # Project documentation
 ```
 
 ---
@@ -49,7 +47,7 @@ LPU-WiFi-AutoLogin/
    - **Edge**: `edge://extensions`
 2. Enable the **Developer mode** toggle in the top-right corner.
 3. Click the **Load unpacked** button.
-4. Select the **`browser-extension`** folder inside this repository.
+4. Select this repository folder directly.
 5. Click the extension icon in your browser toolbar, enter your **Registration Number** and **Password**, and click **Save**.
 6. **Done!** Whenever your laptop connects to LPU Wi-Fi, the extension will log you in automatically in the background.
 

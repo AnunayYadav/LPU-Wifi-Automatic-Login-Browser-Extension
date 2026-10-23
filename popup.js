@@ -10,28 +10,60 @@
 (function () {
   'use strict';
 
-  // Safe Dual Storage Wrapper (Brave & Chrome compatible)
+  // Safe Dual Storage Wrapper (Brave & Chrome compatible, parallelized with instant fallback)
   const Storage = {
     get: function (keys, callback) {
-      if (chrome && chrome.storage && chrome.storage.local) {
-        chrome.storage.local.get(keys, (localRes) => {
-          if (chrome && chrome.storage && chrome.storage.sync) {
-            chrome.storage.sync.get(keys, (syncRes) => {
-              // Local machine storage takes priority over sync
-              const merged = Object.assign({}, syncRes || {}, localRes || {});
-              callback(merged);
-            });
-          } else {
-            callback(localRes || {});
-          }
+      if (!chrome || !chrome.storage) {
+        if (callback) callback({});
+        return;
+      }
+
+      let localData = null;
+      let syncData = null;
+      let localDone = false;
+      let syncDone = false;
+      let finished = false;
+
+      function finish() {
+        if (finished) return;
+        if (localDone && syncDone) {
+          finished = true;
+          const merged = Object.assign({}, syncData || {}, localData || {});
+          if (callback) callback(merged);
+        }
+      }
+
+      if (chrome.storage.local) {
+        chrome.storage.local.get(keys, (res) => {
+          localData = res || {};
+          localDone = true;
+          finish();
         });
-        return;
+      } else {
+        localDone = true;
       }
-      if (chrome && chrome.storage && chrome.storage.sync) {
-        chrome.storage.sync.get(keys, (res) => callback(res || {}));
-        return;
+
+      if (chrome.storage.sync) {
+        chrome.storage.sync.get(keys, (res) => {
+          syncData = res || {};
+          syncDone = true;
+          finish();
+        });
+      } else {
+        syncDone = true;
       }
-      callback({});
+
+      // Offline / high-latency protection: never stall popup UI for sync storage
+      setTimeout(() => {
+        if (!finished) {
+          syncDone = true;
+          if (localDone) {
+            finished = true;
+            const merged = Object.assign({}, syncData || {}, localData || {});
+            if (callback) callback(merged);
+          }
+        }
+      }, 80);
     },
     set: function (items, callback) {
       let executed = false;

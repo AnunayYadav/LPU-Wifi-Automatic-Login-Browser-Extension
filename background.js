@@ -48,7 +48,8 @@ function getBackgroundSettings(callback) {
 // Check connectivity via Google 204 probe with captive portal redirect inspection
 function checkInternetConnectivity(callback) {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 3200);
+  // 1500ms is ample for LAN captive redirects or real Google 204
+  const timeoutId = setTimeout(() => controller.abort(), 1500);
 
   fetch(CONNECTIVITY_URL + '?t=' + Date.now(), {
     cache: 'no-store',
@@ -67,24 +68,29 @@ function checkInternetConnectivity(callback) {
         finalUrl.includes('172.');
 
       if (isCaptiveRedirect) {
-        updateBadgeStatus(false);
-        callback(false);
+        let extractedGateway = null;
+        try {
+          if (resp.url) {
+            const u = new URL(resp.url);
+            extractedGateway = `${u.origin}/24online/servlet/E24onlineHTTPClient`;
+          }
+        } catch (e) {}
+        // Instantly signal offline/captive with the sniffed gateway
+        callback(false, extractedGateway);
         return;
       }
 
       // HTTP 204 from gstatic means uninhibited, real internet access
       if (resp.status === 204) {
         updateBadgeStatus(true);
-        callback(true);
+        callback(true, null);
       } else {
-        updateBadgeStatus(false);
-        callback(false);
+        callback(false, null);
       }
     })
     .catch(() => {
       clearTimeout(timeoutId);
-      updateBadgeStatus(false);
-      callback(false);
+      callback(false, null);
     });
 }
 
@@ -109,6 +115,11 @@ function setExtensionIndicator(state) {
   // Clear any badge text so the icon is clean, beautiful and never obscured
   try {
     chrome.action.setBadgeText({ text: '' });
+  } catch (e) {}
+
+  // Broadcast state change to any open popup views
+  try {
+    chrome.runtime.sendMessage({ action: 'indicator_status_changed', state }).catch(() => {});
   } catch (e) {}
 
   if (state === 'disabled') {
@@ -239,96 +250,197 @@ const LOGIN_ENDPOINTS = [
   'https://internet.lpu.in/24online/servlet/E24onlineHTTPClient'
 ];
 
-// Execute 100% silent background HTTP login (zero tabs opened, no user interruption)
-async function attemptSilentBackgroundLogin(settings) {
+let cachedWorkingEndpoint = null;
+if (chrome && chrome.storage && chrome.storage.local) {
+  chrome.storage.local.get(['lastWorkingEndpoint'], (data) => {
+    if (data && data.lastWorkingEndpoint) {
+      cachedWorkingEndpoint = data.lastWorkingEndpoint;
+    }
+  });
+}
+
+function rememberWorkingEndpoint(endpoint) {
+  cachedWorkingEndpoint = endpoint;
+  try {
+    if (chrome && chrome.storage && chrome.storage.local) {
+      chrome.storage.local.set({ lastWorkingEndpoint: endpoint });
+    }
+  } catch (e) {}
+}
+
+// Single POST request helper with abort controller and fast timeout
+async function postLoginServlet(endpoint, usernameCandidate, password, timeoutMs = 2500, externalSignal = null) {
+  const params = new URLSearchParams();
+  params.append('mode', '191');
+  params.append('username', usernameCandidate);
+  params.append('password', password);
+  params.append('checkClose', '1');
+  params.append('logintype', '2');
+  params.append('chkcond', 'on');
+  params.append('saveinfo', 'on');
+  params.append('url', 'null');
+  params.append('isAccessDenied', 'null');
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  const onAbort = () => controller.abort();
+  if (externalSignal) {
+    externalSignal.addEventListener('abort', onAbort);
+  }
+
+  try {
+    const resp = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Referer': 'http://internet.lpu.in/24online/webpages/client.jsp'
+      },
+      body: params.toString(),
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    if (externalSignal) {
+      externalSignal.removeEventListener('abort', onAbort);
+    }
+
+    const text = await resp.text();
+    const lower = text.toLowerCase();
+
+    if (
+      lower.includes('successfully logged in') ||
+      lower.includes('already logged in') ||
+      lower.includes('you are successfully logged in') ||
+      lower.includes('logged in successfully') ||
+      lower.includes('click here to check your usage') ||
+      lower.includes('minimize this login window') ||
+      lower.includes('logout')
+    ) {
+      return { success: true, endpoint, candidate: usernameCandidate };
+    }
+
+    if (
+      lower.includes('invalid username or password') ||
+      lower.includes('could not log you on') ||
+      lower.includes('maximum login limit reached')
+    ) {
+      console.warn(`[LPU Wi-Fi] Portal rejected: ${text.substring(0, 80)}`);
+      return { success: false, rejected: true, endpoint, candidate: usernameCandidate };
+    }
+
+    return { success: false, endpoint, candidate: usernameCandidate };
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (externalSignal) {
+      externalSignal.removeEventListener('abort', onAbort);
+    }
+    return { success: false, error: err, endpoint, candidate: usernameCandidate };
+  }
+}
+
+// Execute 100% silent background HTTP login with instant response & parallel gateway resolution
+async function attemptSilentBackgroundLogin(settings, detectedGateway = null) {
   const { username, password } = resolveCredentials(settings);
   if (!username || !password) {
     console.log('[LPU Wi-Fi] Silent login skipped: Credentials not configured.');
     return false;
   }
 
-  // Trigger loading animation on the toolbar icon
+  // Instantly trigger animated rotating loader on toolbar icon
   setExtensionIndicator('connecting');
+  const animStartTime = Date.now();
+
+  async function markOnlineSmoothly() {
+    const elapsed = Date.now() - animStartTime;
+    // Guarantee visible rotating spinner for at least 650ms so user clearly sees connecting state
+    if (elapsed < 650) {
+      await new Promise((r) => setTimeout(r, 650 - elapsed));
+    }
+    setExtensionIndicator('online');
+  }
 
   const candidates = [username];
   if (!username.includes('@')) {
     candidates.push(`${username}@lpu.com`);
   }
 
-  const endpoints = [...LOGIN_ENDPOINTS];
+  // Prioritize gateways:
+  // 1. Direct gateway URL extracted from captive portal redirect (100% precision)
+  // 2. Previously cached working gateway for this campus location
+  // 3. User configured gateway (if not auto)
+  // 4. Default campus fallback gateways
+  const orderedEndpoints = [];
+  if (detectedGateway) {
+    orderedEndpoints.push(detectedGateway);
+  }
+  if (cachedWorkingEndpoint && !orderedEndpoints.includes(cachedWorkingEndpoint)) {
+    orderedEndpoints.push(cachedWorkingEndpoint);
+  }
   if (settings.gatewayUrl && settings.gatewayUrl !== 'auto') {
     try {
       const u = new URL(settings.gatewayUrl);
       const customServlet = `${u.origin}/24online/servlet/E24onlineHTTPClient`;
-      if (!endpoints.includes(customServlet)) {
-        endpoints.unshift(customServlet);
+      if (!orderedEndpoints.includes(customServlet)) {
+        orderedEndpoints.push(customServlet);
       }
     } catch (e) {}
   }
-
-  for (const candidate of candidates) {
-    const params = new URLSearchParams();
-    params.append('mode', '191');
-    params.append('username', candidate);
-    params.append('password', password);
-    params.append('checkClose', '1');
-    params.append('logintype', '2');
-    params.append('chkcond', 'on');
-    params.append('saveinfo', 'on');
-    params.append('url', 'null');
-    params.append('isAccessDenied', 'null');
-
-    for (const endpoint of endpoints) {
-      try {
-        console.log(`[LPU Wi-Fi] Silent background POST to ${endpoint} (${candidate})...`);
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3500);
-
-        const resp = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Referer': 'http://internet.lpu.in/24online/webpages/client.jsp'
-          },
-          body: params.toString(),
-          signal: controller.signal
-        });
-        clearTimeout(timeoutId);
-
-        const text = await resp.text();
-        const lower = text.toLowerCase();
-
-        if (
-          lower.includes('successfully logged in') ||
-          lower.includes('already logged in') ||
-          lower.includes('you are successfully logged in') ||
-          lower.includes('logged in successfully') ||
-          lower.includes('click here to check your usage') ||
-          lower.includes('minimize this login window')
-        ) {
-          console.log(`[LPU Wi-Fi] Silent background login SUCCESS on ${endpoint}!`);
-          setExtensionIndicator('online');
-          return true;
-        }
-
-        if (
-          lower.includes('invalid username or password') ||
-          lower.includes('could not log you on') ||
-          lower.includes('maximum login limit reached')
-        ) {
-          console.warn(`[LPU Wi-Fi] Portal rejection: ${text.substring(0, 80)}`);
-        }
-      } catch (err) {
-        // Continue to next endpoint if current one timed out or unreachable
-      }
+  for (const ep of LOGIN_ENDPOINTS) {
+    if (!orderedEndpoints.includes(ep)) {
+      orderedEndpoints.push(ep);
     }
   }
 
-  // Quick connectivity verification check
-  const isNowOnline = await new Promise((resolve) => checkInternetConnectivity(resolve));
+  // FAST LANE: If we have a verified detected gateway or cached working gateway, test it immediately
+  const topGateway = orderedEndpoints[0];
+  if (topGateway) {
+    console.log(`[LPU Wi-Fi] Fast-lane login attempt on top gateway: ${topGateway}...`);
+    const fastResult = await postLoginServlet(topGateway, candidates[0], password, 1500);
+    if (fastResult.success) {
+      console.log(`[LPU Wi-Fi] Fast-lane login SUCCESS on ${topGateway}!`);
+      rememberWorkingEndpoint(topGateway);
+      await markOnlineSmoothly();
+      return true;
+    }
+  }
+
+  // PARALLEL CONCURRENT LANE:
+  // Instead of waiting serially across unreachable subnet IPs (which previously took 20+ seconds),
+  // fire concurrent requests across endpoints. Whichever responds first wins immediately!
+  console.log('[LPU Wi-Fi] Launching concurrent multi-gateway login race...');
+  const abortController = new AbortController();
+
+  const racePromises = [];
+  for (const ep of orderedEndpoints) {
+    for (const cand of candidates) {
+      racePromises.push(
+        (async () => {
+          const res = await postLoginServlet(ep, cand, password, 2200, abortController.signal);
+          if (res.success) {
+            return res;
+          }
+          throw new Error('Not connected');
+        })()
+      );
+    }
+  }
+
+  try {
+    const winner = await Promise.any(racePromises);
+    abortController.abort(); // Cancel pending slower requests
+    console.log(`[LPU Wi-Fi] Concurrent login WON on ${winner.endpoint} with ${winner.candidate}!`);
+    rememberWorkingEndpoint(winner.endpoint);
+    await markOnlineSmoothly();
+    return true;
+  } catch (allFailed) {
+    abortController.abort();
+  }
+
+  // Quick fallback check
+  const isNowOnline = await new Promise((resolve) => checkInternetConnectivity((online) => resolve(online)));
   if (isNowOnline) {
     console.log('[LPU Wi-Fi] Verified online status after background authentication.');
-    setExtensionIndicator('online');
+    await markOnlineSmoothly();
     return true;
   }
 
@@ -389,15 +501,19 @@ function runAdaptiveProbe(triggerSource = 'timer') {
       return;
     }
 
-    checkInternetConnectivity(async (isOnline) => {
+    checkInternetConnectivity(async (isOnline, detectedGateway) => {
       isProbing = false;
       if (!isOnline) {
+        // INSTANTLY trigger the loading/connecting animation on the extension indicator!
+        // No waiting on red or sluggish delays
+        setExtensionIndicator('connecting');
+
         console.log(`[LPU Wi-Fi] [${triggerSource}] Offline/Captive detected. Running silent background login...`);
         isLoggingIn = true;
 
         let silentSuccess = false;
         try {
-          silentSuccess = await attemptSilentBackgroundLogin(settings);
+          silentSuccess = await attemptSilentBackgroundLogin(settings, detectedGateway);
         } catch (e) {
           console.warn('[LPU Wi-Fi] Background login attempt error:', e);
         }
@@ -405,10 +521,12 @@ function runAdaptiveProbe(triggerSource = 'timer') {
 
         if (silentSuccess) {
           console.log('[LPU Wi-Fi] Logged in completely in background. Zero tabs opened!');
+          setExtensionIndicator('online');
           scheduleNextAdaptiveProbe(10000);
         } else {
-          // Retry silently via background POST in 3s without opening any tab
-          scheduleNextAdaptiveProbe(3000);
+          setExtensionIndicator('offline');
+          // Retry silently via background POST in 2.5s without opening any tab
+          scheduleNextAdaptiveProbe(2500);
         }
       } else {
         setExtensionIndicator('online');
@@ -526,6 +644,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       const ok = await attemptSilentBackgroundLogin(settings);
       sendResponse({ success: ok });
     });
+    return true;
+  }
+
+  if (message.action === 'get_indicator_status') {
+    sendResponse({ state: currentIndicatorState, isLoggingIn });
     return true;
   }
 

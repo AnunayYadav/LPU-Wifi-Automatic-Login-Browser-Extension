@@ -584,19 +584,81 @@
       });
     }
 
+    // ==========================================================================
+    // Unified Status Sync between Background Service Worker & Popup
+    // ==========================================================================
+    function applyStatusToPopup(status) {
+      if (status === 'connecting') {
+        if (manualSilentLoginBtn) {
+          manualSilentLoginBtn.classList.add('loading');
+          manualSilentLoginBtn.title = 'Silent login connecting...';
+        }
+        if (wifiStatusIcon) {
+          wifiStatusIcon.className = 'brand-icon checking';
+          wifiStatusIcon.title = 'Authenticating in background...';
+        }
+        if (netState) {
+          netState.textContent = 'Connecting...';
+          netState.className = 'info-val';
+        }
+      } else if (status === 'online') {
+        if (manualSilentLoginBtn) {
+          manualSilentLoginBtn.classList.remove('loading');
+          manualSilentLoginBtn.title = 'Fast Silent Login (One-Click Background Auth)';
+        }
+        if (wifiStatusIcon) {
+          wifiStatusIcon.className = 'brand-icon online';
+          wifiStatusIcon.title = 'Connected & Online • Click to recheck';
+        }
+        if (netState) {
+          netState.textContent = 'Online';
+          netState.className = 'info-val val-green';
+        }
+      } else if (status === 'offline') {
+        if (manualSilentLoginBtn) {
+          manualSilentLoginBtn.classList.remove('loading');
+          manualSilentLoginBtn.title = 'Fast Silent Login (One-Click Background Auth)';
+        }
+        if (wifiStatusIcon) {
+          wifiStatusIcon.className = 'brand-icon offline';
+          wifiStatusIcon.title = 'Captive Portal / Disconnected • Click to recheck';
+        }
+        if (netState) {
+          netState.textContent = 'Captive Portal / Offline';
+          netState.className = 'info-val';
+        }
+      } else if (status === 'disabled') {
+        if (manualSilentLoginBtn) manualSilentLoginBtn.classList.remove('loading');
+        if (wifiStatusIcon) {
+          wifiStatusIcon.className = 'brand-icon';
+          wifiStatusIcon.title = 'Auto-Login Disabled';
+        }
+      }
+    }
+
+    // Sync live state from background worker
+    if (chrome && chrome.runtime && chrome.runtime.onMessage) {
+      chrome.runtime.onMessage.addListener((msg) => {
+        if (msg && msg.action === 'indicator_status_changed' && msg.state) {
+          applyStatusToPopup(msg.state);
+        }
+      });
+    }
+
+    if (chrome && chrome.runtime && chrome.runtime.sendMessage) {
+      chrome.runtime.sendMessage({ action: 'get_indicator_status' }, (res) => {
+        if (res && res.state) {
+          applyStatusToPopup(res.state);
+        }
+      });
+    }
+
     function checkConnection() {
-      if (wifiStatusIcon) {
-        wifiStatusIcon.className = 'brand-icon checking';
-        wifiStatusIcon.title = 'Checking campus connection...';
-      }
-      if (netState) {
-        netState.textContent = 'Probing...';
-        netState.className = 'info-val';
-      }
+      applyStatusToPopup('connecting');
 
       const startTime = performance.now();
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3500);
+      const timeoutId = setTimeout(() => controller.abort(), 2500);
 
       fetch('http://connectivitycheck.gstatic.com/generate_204?t=' + Date.now(), {
         cache: 'no-store',
@@ -614,39 +676,36 @@
             resp.status !== 204;
 
           if (isCaptive) {
-            if (wifiStatusIcon) {
-              wifiStatusIcon.className = 'brand-icon offline';
-              wifiStatusIcon.title = 'Captive Portal / Disconnected • Click to recheck';
-            }
-            if (netState) {
-              netState.textContent = 'Captive Portal / Offline';
-              netState.className = 'info-val';
-            }
             if (netLatency) netLatency.textContent = 'Captive';
+
+            // If autoLogin is active, immediately trigger background login and keep animating
+            if (state.autoLogin !== false) {
+              applyStatusToPopup('connecting');
+              if (chrome && chrome.runtime && chrome.runtime.sendMessage) {
+                chrome.runtime.sendMessage({ action: 'attempt_silent_login' }, (res) => {
+                  if (res && res.success) {
+                    applyStatusToPopup('online');
+                  } else {
+                    applyStatusToPopup('offline');
+                  }
+                });
+              }
+            } else {
+              applyStatusToPopup('offline');
+            }
             return;
           }
 
           const latency = Math.round(performance.now() - startTime);
+          applyStatusToPopup('online');
           if (wifiStatusIcon) {
-            wifiStatusIcon.className = 'brand-icon online';
             wifiStatusIcon.title = `Connected & Online (${latency} ms) • Click to recheck`;
-          }
-          if (netState) {
-            netState.textContent = 'Online';
-            netState.className = 'info-val val-green';
           }
           if (netLatency) netLatency.textContent = `${latency} ms`;
         })
         .catch(() => {
           clearTimeout(timeoutId);
-          if (wifiStatusIcon) {
-            wifiStatusIcon.className = 'brand-icon offline';
-            wifiStatusIcon.title = 'Offline / Disconnected • Click to recheck';
-          }
-          if (netState) {
-            netState.textContent = 'Offline';
-            netState.className = 'info-val';
-          }
+          applyStatusToPopup('offline');
           if (netLatency) netLatency.textContent = 'Timeout';
         });
     }

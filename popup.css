@@ -179,6 +179,17 @@ body {
 .brand-icon.checking {
   color: #ff9f0a;
   background: rgba(255, 159, 10, 0.14);
+  box-shadow: 0 0 10px rgba(255, 159, 10, 0.25);
+}
+
+.brand-icon.checking svg {
+  animation: brandPulseSpin 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes brandPulseSpin {
+  0% { transform: scale(0.92) rotate(0deg); opacity: 0.7; }
+  50% { transform: scale(1.08) rotate(180deg); opacity: 1; }
+  100% { transform: scale(0.92) rotate(360deg); opacity: 0.7; }
 }
 
 .brand-text {

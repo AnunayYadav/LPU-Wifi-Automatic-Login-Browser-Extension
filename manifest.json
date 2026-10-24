@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "LPU Wi-Fi Auto-Login",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "description": "Multi-account, automated background auto-login and session keep-alive for all LPU Wi-Fi networks (Hostels, Blocks 25-38, Wireless).",
   "permissions": [
     "storage",
